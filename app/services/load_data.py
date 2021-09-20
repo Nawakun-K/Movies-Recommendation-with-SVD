@@ -6,14 +6,9 @@ import numpy as np
 
 class LoadNetflixData():
     def __init__(self, path: str='./assets', demo: bool=True):
-        filepaths = glob.glob(f'{path}/combined_data*.txt')
-        if demo == True:
-            self.df = pd.read_csv(filepaths[0], header = None, names = ['Cust_Id', 'Rating'], usecols = [0,1])
-            self.df['Rating'] = self.df['Rating'].astype(float)
-        else:
-            self.df = pd.concat([pd.read_csv(f, header = None, names = ['Cust_Id', 'Rating'], usecols = [0,1]) for f in filepaths])
-            self.df['Rating'] = self.df['Rating'].astype(float)
-            self.df.index = np.arange(0,len(self.df))
+        self.filepaths = glob.glob(f'{path}/combined_data*.txt')
+        self.demo = demo
+        
     
     def _data_cleaning(self) -> pd.DataFrame:
         '''
@@ -66,9 +61,20 @@ class LoadNetflixData():
         return df
 
     def load(self) -> pd.DataFrame:
+        '''
+        Load Netflix data, with data cleaning and slicing, into DataFrame
+        '''
+        if self.demo == True:
+            self.df = pd.read_csv(self.filepaths[0], header = None, names = ['Cust_Id', 'Rating'], usecols = [0,1])
+            self.df['Rating'] = self.df['Rating'].astype(float)
+        else:
+            self.df = pd.concat([pd.read_csv(f, header = None, names = ['Cust_Id', 'Rating'], usecols = [0,1]) for f in self.filepaths])
+            self.df['Rating'] = self.df['Rating'].astype(float)
+            self.df.index = np.arange(0,len(self.df))
+        
         df = self._data_cleaning()
         df = self._data_slicing(df)
 
-        df = df.pivot_table(index=['Cust_Id'],columns=['Movie_Id'],values='Rating')
+        df = df.pivot_table(index=['Cust_Id'], columns=['Movie_Id'], values='Rating')
 
         return df
