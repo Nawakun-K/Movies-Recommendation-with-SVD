@@ -184,6 +184,12 @@ dmypy.json
 
 *.csv
 *.json
+combined_data_1.txt
+combined_data_2.txt
+combined_data_3.txt
+combined_data_4.txt
+probe.txt
+qualifying.txt
 
 # VS Code
 *.code-workspace
